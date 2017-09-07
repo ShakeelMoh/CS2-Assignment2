@@ -10,17 +10,18 @@ import javax.swing.JPanel;
 public class WordPanel extends JPanel implements Runnable {
 
     public static volatile boolean done;
-    private WordRecord[] words;
+    private static WordRecord[] words;
+    WordRecord currWord;
     private int noWords;
-    private int maxY;
-    private int xPos;
+    private static int maxY;
+    private int num;
     private boolean gameOver = false;
     private Score s;
-    private WordApp wa = new WordApp();
+    GUIUpdater gu;
 
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        //System.out.println("Threads " + xPos);
         //System.out.println("in paint ");
         int width = getWidth();
         int height = getHeight();
@@ -33,13 +34,25 @@ public class WordPanel extends JPanel implements Runnable {
         //draw the words
         //animation must be added 
 
+        //g.drawString(currWord.getWord(), currWord.getX(), currWord.getY() + 20);
         for (int i = 0; i < noWords; i++) {
             //g.drawString(words[i].getWord(),words[i].getX(),words[i].getY());	
+            //System.out.println("for word " + i + " its at " + (words[i].getY() + 20));
             g.drawString(words[i].getWord(), words[i].getX(), words[i].getY() + 20);  //y-offset for skeleton so that you can see the words	
         }
 
         //System.out.println("y value is " + words[0].getY());
         // g.drawString(words[0].getWord(), xPos, words[0].getY() + 20);
+    }
+
+    WordPanel(WordRecord[] words, int maxY, int num) {
+        this.words = words; //will this work?
+        noWords = words.length;
+        done = false;
+        this.maxY = maxY;
+        this.num = num;
+        s = new Score();
+
     }
 
     WordPanel(WordRecord[] words, int maxY) {
@@ -51,60 +64,61 @@ public class WordPanel extends JPanel implements Runnable {
 
     }
 
-    WordPanel(WordRecord[] words, int maxY, int xPos) {
-        this.words = words; //will this work?
-        noWords = words.length;
-        done = false;
-        this.maxY = maxY;
-        this.xPos = xPos;
+    public void setNum(int x) {
+        this.num = x;
+    }
+
+    public int getnum() {
+        return num;
     }
 
     public void run() {
         //add in code to animate this;
-        while (!gameOver) {
-
-            for (int i = 0; i < noWords; i++) {
-                //while (!words[i].dropped()){
-                words[i].drop(20);
-                //System.out.println(words[i].getY());
-                try {
-                    Thread.sleep(100);//words[i].getSpeed());
-                    this.repaint();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(WordPanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                if (words[i].dropped()){
-                    words[i].resetWord();
-                    s.missedWord();
-                    
-                    
-                }
-                //}
-            }
-
-        }
-
         /*
-        for (int i = 0; i < noWords; i++) {
+        currWord = words[0];
+        System.out.println(point + " point");
+        currWord.setX(xPos);
+        currWord.resetWord();
 
-            while (!words[i].dropped()) {
-                words[i].drop(10);
-                
-                words[i].setX(xPos);
-                //System.out.println("here");
-                try {
-                    Thread.sleep(words[i].getSpeed());
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(WordPanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                System.out.println("repainting...");
+        while (!currWord.dropped()) {
+
+            //System.out.println(currWord.getY());
+            currWord.drop(20);
+            //System.out.println(words[i].getY());
+            try {
+                Thread.sleep(currWord.getSpeed());//words[i].getSpeed());
                 repaint();
-
+            } catch (InterruptedException ex) {
+                Logger.getLogger(WordPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("out");
-
+            if (currWord.dropped()) {
+                System.out.println("happens");
+                currWord.resetWord();
+                s.missedWord();
+                GUIUpdater.updateScore();
+            }
         }
          */
-    }
+        while (gameOver == false) {
+            for (int i = 0; i < words.length; i++) {
 
+                while (!words[i].dropped()) {
+                    words[i].drop(10);
+                    //System.out.println(Thread.currentThread().getId());
+                    //System.out.println("here");
+                    try {
+                        Thread.sleep(words[i].getSpeed());
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(WordPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                    repaint();
+                    break;
+                }
+
+            }
+
+        }
+
+    }
 }
