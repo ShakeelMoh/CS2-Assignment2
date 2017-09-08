@@ -20,41 +20,47 @@ public class WordApp {
     static int frameX = 1000;
     static int frameY = 600;
     static int yLimit = 480;
-
+    
+    
     static WordDictionary dict = new WordDictionary(); //use default dictionary, to read from file eventually
 
     static WordRecord[] words;
     static volatile boolean done;  //must be volatile
     static Score score = new Score();
     static GUIUpdater gu;
-    
+    static JLabel scr;
+    static JPanel g;
+
     static WordPanel w;
 
     public static void setupGUI(int frameX, int frameY, int yLimit) {
         // Frame init and dimensions
+
         JFrame frame = new JFrame("WordGame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(frameX, frameY);
+        frame.setLocationRelativeTo(null);
 
-        JPanel g = new JPanel();
+        g = new JPanel();
         g.setLayout(new BoxLayout(g, BoxLayout.PAGE_AXIS));
         g.setSize(frameX, frameY);
 
-        w = new WordPanel(words, yLimit);
+        
+        w = new WordPanel(words, yLimit);//default constructor
         w.setSize(frameX, yLimit + 100);
         g.add(w);
-
+        
+        
         JPanel txt = new JPanel();
         txt.setLayout(new BoxLayout(txt, BoxLayout.LINE_AXIS));
         JLabel caught = new JLabel("Caught: " + score.getCaught() + "    ");
         JLabel missed = new JLabel("Missed:" + score.getMissed() + "    ");
-        JLabel scr = new JLabel("Score:" + score.getScore() + "    ");
+        scr = new JLabel("Score:" + score.getScore() + "    ");
         txt.add(caught);
         txt.add(missed);
         txt.add(scr);
 
-        
-        GUIUpdater(scr, missed, caught);
+        gu = new GUIUpdater(scr);
         //[snip]
         final JTextField textEntry = new JTextField("", 20);
         textEntry.addActionListener(new ActionListener() {
@@ -72,15 +78,14 @@ public class WordApp {
 
         JPanel b = new JPanel();
         b.setLayout(new BoxLayout(b, BoxLayout.LINE_AXIS));
-        JButton startB = new JButton("Start");;
+        JButton startB = new JButton("Start");
 
         // add the listener to the jbutton to handle the "pressed" event
         startB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //[snip]
                 //START THE GAME
-                
-                
+
                 /*
                 int x_inc = (int) frameX / noWords;
 
@@ -91,8 +96,7 @@ public class WordApp {
                     System.out.println("Thread" + i + " starting");
                     threads[i].start();
                 }
-                */
-
+                 */
                 textEntry.requestFocus();  //return focus to the text entry field
             }
         });
@@ -102,6 +106,8 @@ public class WordApp {
         endB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //[snip]
+                w.setGameOver(true);
+                
             }
         });
 
@@ -163,9 +169,7 @@ public class WordApp {
             dict = new WordDictionary(tmpDict);
         }
 
-        gu = new GUIUpdater();
-        
-        
+        //gu = new GUIUpdater();
         WordRecord.dict = dict; //set the class dictionary for the words.
 
         words = new WordRecord[noWords];  //shared array of current words
@@ -181,9 +185,30 @@ public class WordApp {
             words[i] = new WordRecord(dict.getNewWord(), i * x_inc, yLimit);
         }
         
-        Thread t = new Thread(w);
+        Thread[] threads = new Thread[noWords];
+
+        for (int i = 0; i < noWords; i++) {
+            //w.setXPos(i * x_inc);
+            threads[i] = new Thread(w);
+            w.setNum(i);
+            threads[i].start();
+            
+            //threads[i].start();
+        }
         
-        t.start();
+        for (int i = 0; i < threads.length; i++) {
+            System.out.println("Thread" + i + " starting");
+            
+        }
+    }
+
+    public static void changeJLabel(final String text) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                scr.setText(text);
+            }
+        });
     }
 
 }

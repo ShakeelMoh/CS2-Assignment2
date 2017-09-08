@@ -72,6 +72,16 @@ public class WordPanel extends JPanel implements Runnable {
         return num;
     }
 
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+    
+    
+
     public void run() {
         //add in code to animate this;
         /*

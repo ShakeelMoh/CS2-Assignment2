@@ -1,4 +1,3 @@
-
 import javax.swing.JLabel;
 
 /*
@@ -12,13 +11,20 @@ import javax.swing.JLabel;
  * @author User
  */
 public class GUIUpdater {
+
+    String scoreText;
+    static JLabel scr;// = new JLabel("Score:" + Score.getScore() + "    ");
     
-    public GUIUpdater(JLabel score, JLabel missed, JLabel caught){
-        
+    public GUIUpdater(JLabel score){
+        WordApp.changeJLabel("Score:" + Score.getScore() + "    ");
     }
     
     public GUIUpdater(){
-        
+
+    }
+
+    public static void updateScore(){
+        WordApp.changeJLabel("Score:" + Score.getScore() + "    ");
     }
     
 }

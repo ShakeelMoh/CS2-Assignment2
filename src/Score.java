@@ -1,7 +1,7 @@
 public class Score {
-	private int missedWords;
-	private int caughtWords;
-	private int gameScore;
+	private static int missedWords;
+	private static int caughtWords;
+	private static int gameScore;
 	
 	Score() {
 		missedWords=0;
@@ -23,7 +23,7 @@ public class Score {
 		return (missedWords+caughtWords);
 	}
 
-	public synchronized int getScore() {
+	public static synchronized int getScore() {
 		return gameScore;
 	}
 	
