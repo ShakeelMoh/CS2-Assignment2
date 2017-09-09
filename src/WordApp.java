@@ -20,8 +20,7 @@ public class WordApp {
     static int frameX = 1000;
     static int frameY = 600;
     static int yLimit = 480;
-    
-    
+
     static WordDictionary dict = new WordDictionary(); //use default dictionary, to read from file eventually
 
     static WordRecord[] words;
@@ -29,6 +28,8 @@ public class WordApp {
     static Score score = new Score();
     static GUIUpdater gu;
     static JLabel scr;
+    static JLabel caught;
+    static JLabel missed;
     static JPanel g;
 
     static WordPanel w;
@@ -45,16 +46,14 @@ public class WordApp {
         g.setLayout(new BoxLayout(g, BoxLayout.PAGE_AXIS));
         g.setSize(frameX, frameY);
 
-        
         w = new WordPanel(words, yLimit);//default constructor
         w.setSize(frameX, yLimit + 100);
         g.add(w);
-        
-        
+
         JPanel txt = new JPanel();
         txt.setLayout(new BoxLayout(txt, BoxLayout.LINE_AXIS));
-        JLabel caught = new JLabel("Caught: " + score.getCaught() + "    ");
-        JLabel missed = new JLabel("Missed:" + score.getMissed() + "    ");
+        caught = new JLabel("Caught: " + score.getCaught() + "    ");
+        missed = new JLabel("Missed:" + score.getMissed() + "    ");
         scr = new JLabel("Score:" + score.getScore() + "    ");
         txt.add(caught);
         txt.add(missed);
@@ -67,6 +66,8 @@ public class WordApp {
             public void actionPerformed(ActionEvent evt) {
                 String text = textEntry.getText();
                 //[snip]
+                //enter button pressed
+                gu.setEnteredWord(text);
                 textEntry.setText("");
                 textEntry.requestFocus();
             }
@@ -86,17 +87,22 @@ public class WordApp {
                 //[snip]
                 //START THE GAME
 
-                /*
-                int x_inc = (int) frameX / noWords;
-
                 Thread[] threads = new Thread[noWords];
 
-                for (int i = 0; i < 1; i++) {
-                    threads[i] = new Thread(new WordPanel(words ,yLimit, x_inc * i));
-                    System.out.println("Thread" + i + " starting");
+                for (int i = 0; i < noWords; i++) {
+                    //w.setXPos(i * x_inc);
+                    threads[i] = new Thread(w);
+                    w.setNum(i);
                     threads[i].start();
+
+                    //threads[i].start();
                 }
-                 */
+
+                for (int i = 0; i < threads.length; i++) {
+                    System.out.println("Thread" + i + " starting");
+
+                }
+
                 textEntry.requestFocus();  //return focus to the text entry field
             }
         });
@@ -107,7 +113,7 @@ public class WordApp {
             public void actionPerformed(ActionEvent e) {
                 //[snip]
                 w.setGameOver(true);
-                
+
             }
         });
 
@@ -158,7 +164,7 @@ public class WordApp {
 
         Scanner sc = new Scanner(System.in);
 
-        String line = "10 2 example_dict.txt";
+        String line = "20 2 full_dict.txt";
         String[] lineinfo = line.split(" ");
         //deal with command line arguments
         totalWords = Integer.parseInt(lineinfo[0]);  //total words to fall
@@ -184,29 +190,16 @@ public class WordApp {
         for (int i = 0; i < noWords; i++) {
             words[i] = new WordRecord(dict.getNewWord(), i * x_inc, yLimit);
         }
-        
-        Thread[] threads = new Thread[noWords];
 
-        for (int i = 0; i < noWords; i++) {
-            //w.setXPos(i * x_inc);
-            threads[i] = new Thread(w);
-            w.setNum(i);
-            threads[i].start();
-            
-            //threads[i].start();
-        }
-        
-        for (int i = 0; i < threads.length; i++) {
-            System.out.println("Thread" + i + " starting");
-            
-        }
     }
 
-    public static void changeJLabel(final String text) {
+    public static void changeJLabel(final String caughts, final String misseds, final String scrs) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                scr.setText(text);
+                caught.setText(caughts);
+                missed.setText(misseds);
+                scr.setText(scrs);
             }
         });
     }

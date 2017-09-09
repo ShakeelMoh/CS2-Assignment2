@@ -12,19 +12,29 @@ import javax.swing.JLabel;
  */
 public class GUIUpdater {
 
-    String scoreText;
-    static JLabel scr;// = new JLabel("Score:" + Score.getScore() + "    ");
+    //String scoreText;
+    //static JLabel scr;// = new JLabel("Score:" + Score.getScore() + "    ");
+    static String enteredWord = "";
     
     public GUIUpdater(JLabel score){
-        WordApp.changeJLabel("Score:" + Score.getScore() + "    ");
+       //WordApp.changeJLabel("Score:" + Score.getScore() + "    ");
     }
     
     public GUIUpdater(){
 
     }
 
-    public static void updateScore(){
-        WordApp.changeJLabel("Score:" + Score.getScore() + "    ");
+    public synchronized static void setEnteredWord(String word){
+        enteredWord = word;
+    }
+    public synchronized static String getEnteredWord(){
+        return enteredWord;
+    }
+
+    
+    public synchronized static void updateScore(){
+        WordApp.changeJLabel("Caught:" + Score.getCaught() + "    ", "Missed:" + Score.getMissed() + "    ", "Score:" + Score.getScore() + "    ");
+
     }
     
 }
