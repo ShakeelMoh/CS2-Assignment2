@@ -9,6 +9,8 @@ import java.io.IOException;
 
 import java.util.Scanner;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //model is separate from the view.
 
 public class WordApp {
@@ -32,9 +34,11 @@ public class WordApp {
     static JLabel missed;
     static JPanel g;
 
+    static Thread[] threads;
+
     static WordPanel w;
 
-    public static void setupGUI(int frameX, int frameY, int yLimit) {
+    public synchronized static void setupGUI(int frameX, int frameY, int yLimit) {
         // Frame init and dimensions
 
         JFrame frame = new JFrame("WordGame");
@@ -86,8 +90,9 @@ public class WordApp {
             public void actionPerformed(ActionEvent e) {
                 //[snip]
                 //START THE GAME
+                w.setGameOver(false);
 
-                Thread[] threads = new Thread[noWords];
+                threads = new Thread[noWords];
 
                 for (int i = 0; i < noWords; i++) {
                     //w.setXPos(i * x_inc);
@@ -97,6 +102,10 @@ public class WordApp {
 
                     //threads[i].start();
                 }
+
+                //START GUI UPDATER THREAD
+                GUIUpdater guiupdate = new GUIUpdater();
+                guiupdate.start();
 
                 for (int i = 0; i < threads.length; i++) {
                     System.out.println("Thread" + i + " starting");
@@ -113,7 +122,28 @@ public class WordApp {
             public void actionPerformed(ActionEvent e) {
                 //[snip]
                 w.setGameOver(true);
+                Score.resetScore();
+                GUIUpdater.updateScore();
+                GUIUpdater.resetDoneWords();
+            }
+        });
 
+        JButton pauseB = new JButton("Pause");;
+
+        // add the listener to the jbutton to handle the "pressed" event
+        pauseB.addActionListener(new ActionListener() {
+            public synchronized void actionPerformed(ActionEvent e) {
+                //[snip]
+                //TO DO
+            }
+        });
+        JButton resumeB = new JButton("Resume");;
+
+        // add the listener to the jbutton to handle the "pressed" event
+        pauseB.addActionListener(new ActionListener() {
+            public synchronized void actionPerformed(ActionEvent e) {
+                //[snip]
+                //TO DO
             }
         });
 
@@ -130,6 +160,8 @@ public class WordApp {
         b.add(startB);
         b.add(endB);
         b.add(quitB);
+        //b.add(pauseB);
+        //b.add(resumeB);
         g.add(b);
 
         frame.setLocationRelativeTo(null);  // Center window on screen.
@@ -164,10 +196,11 @@ public class WordApp {
 
         Scanner sc = new Scanner(System.in);
 
-        String line = "20 2 full_dict.txt";
+        String line = "5 2 full_dict.txt";
         String[] lineinfo = line.split(" ");
         //deal with command line arguments
         totalWords = Integer.parseInt(lineinfo[0]);  //total words to fall
+        GUIUpdater.setTotalWords(totalWords);
         noWords = Integer.parseInt(lineinfo[1]); // total words falling at any point
         assert (totalWords >= noWords); // this could be done more neatly
         String[] tmpDict = getDictFromFile(lineinfo[2]); //file of words
@@ -200,6 +233,24 @@ public class WordApp {
                 caught.setText(caughts);
                 missed.setText(misseds);
                 scr.setText(scrs);
+            }
+        });
+    }
+
+    public static void showEndMessage() {
+        EventQueue.invokeLater(new Runnable() {
+
+            boolean flag = true;
+
+            @Override
+            public void run() {
+
+                while (flag = true) {
+                    if (GUIUpdater.isDone == true) {
+                        JOptionPane.showMessageDialog(null, "Thanks for playing", "Winner!", JOptionPane.INFORMATION_MESSAGE);
+                        flag = false;
+                    }
+                }
             }
         });
     }

@@ -37,7 +37,7 @@ public class WordPanel extends JPanel implements Runnable {
 
         for (int i = 0; i < noWords; i++) {
 
-            g.drawString(words[i].getWord(), words[i].getX(), words[i].getY() + 20);  //y-offset for skeleton so that you can see the words	
+            g.drawString(words[i].getWord(), words[i].getX(), words[i].getY() - 5);  //y-offset for skeleton so that you can see the words	
         }
 
     }
@@ -79,8 +79,9 @@ public class WordPanel extends JPanel implements Runnable {
 
     public void run() {
         //add in code to animate this;
-
+        GUIUpdater.setDone(false);
         while (gameOver == false) {
+            //System.out.println(Thread.activeCount() + " threads");
             for (int i = 0; i < words.length; i++) {
                 while (!words[i].dropped()) {
                     words[i].drop(10);
@@ -88,6 +89,7 @@ public class WordPanel extends JPanel implements Runnable {
                     //System.out.println("here");
                     try {
                         Thread.sleep(words[i].getSpeed());
+                        
                         repaint();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(WordPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -104,6 +106,7 @@ public class WordPanel extends JPanel implements Runnable {
                     if (GUIUpdater.getEnteredWord().equals(words[i].getWord())) {
                         //System.out.println(words[i].getWord());
                         GUIUpdater.setEnteredWord("");
+                        GUIUpdater.incDoneWords();
                         System.out.println("CHECK: WORKED FOR WORD " + words[i].getWord());
                         caught = true;
                         s.caughtWord(words[i].getWord().length());
@@ -123,7 +126,16 @@ public class WordPanel extends JPanel implements Runnable {
 
             }
 
+            if (GUIUpdater.getDoneWords() == GUIUpdater.getTotalWords()){
+                gameOver = true;
+                GUIUpdater.setDone(true);
+              
+            }
         }
-
+        
+        for (int i = 0; i < words.length; i++) {
+            words[i].setY(-10);
+        }
+        repaint();
     }
 }
