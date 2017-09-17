@@ -1,3 +1,4 @@
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -6,12 +7,11 @@ import javax.swing.JOptionPane;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author User
  */
-public class GUIUpdater extends Thread{
+public class GUIUpdater extends Thread {
 
     //String scoreText;
     //static JLabel scr;// = new JLabel("Score:" + Score.getScore() + "    ");
@@ -20,20 +20,21 @@ public class GUIUpdater extends Thread{
     static int doneWords = 0;
     static boolean isDone = false;
     static volatile boolean done;
-    
-            
-    public GUIUpdater(JLabel score){
-       //WordApp.changeJLabel("Score:" + Score.getScore() + "    ");
+    static int threadNum;
+
+    public GUIUpdater(JLabel score) {
+        //WordApp.changeJLabel("Score:" + Score.getScore() + "    ");
     }
-    
-    public GUIUpdater(){
+
+    public GUIUpdater() {
 
     }
 
-    public synchronized static void setEnteredWord(String word){
+    public synchronized static void setEnteredWord(String word) {
         enteredWord = word;
     }
-    public synchronized static String getEnteredWord(){
+
+    public synchronized static String getEnteredWord() {
         return enteredWord;
     }
 
@@ -48,12 +49,13 @@ public class GUIUpdater extends Thread{
     public synchronized static int getDoneWords() {
         return doneWords;
     }
-    public synchronized static void resetDoneWords(){
+
+    public synchronized static void resetDoneWords() {
         doneWords = 0;
     }
 
     public synchronized static void incDoneWords() {
-        doneWords ++;
+        doneWords++;
     }
 
     public synchronized static boolean isDone() {
@@ -63,29 +65,35 @@ public class GUIUpdater extends Thread{
     public synchronized static void setDone(boolean done) {
         GUIUpdater.done = done;
     }
-    
 
-    
-
-    
-    public synchronized static void updateScore(){
+    public synchronized static void updateScore() {
         WordApp.changeJLabel("Caught:" + Score.getCaught() + "    ", "Missed:" + Score.getMissed() + "    ", "Score:" + Score.getScore() + "    ");
 
     }
+
+    public synchronized static int getThreadNum() {
+        return threadNum;
+    }
+
+    public synchronized static void setThreadNum(int threadNum) {
+        GUIUpdater.threadNum = threadNum;
+    }
+
     
-    public void run(){
-        
+
+    public void run() {
+
         boolean flag = false;
-        while (flag == false){
+        while (flag == false) {
             
-            if (done){
+            if (done) {
                 JOptionPane.showMessageDialog(null, "Thanks for playing", "Winner!", JOptionPane.INFORMATION_MESSAGE);
                 done = false;
                 flag = true;
             }
-            
+
         }
-        
+
     }
-    
+
 }

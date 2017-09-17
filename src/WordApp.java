@@ -97,7 +97,8 @@ public class WordApp {
                 for (int i = 0; i < noWords; i++) {
                     //w.setXPos(i * x_inc);
                     threads[i] = new Thread(w);
-                    w.setNum(i);
+                    //w.setNum(i);
+                    //GUIUpdater.setThreadNum(i);
                     threads[i].start();
 
                     //threads[i].start();
@@ -106,11 +107,6 @@ public class WordApp {
                 //START GUI UPDATER THREAD
                 GUIUpdater guiupdate = new GUIUpdater();
                 guiupdate.start();
-
-                for (int i = 0; i < threads.length; i++) {
-                    System.out.println("Thread" + i + " starting");
-
-                }
 
                 textEntry.requestFocus();  //return focus to the text entry field
             }
@@ -196,7 +192,7 @@ public class WordApp {
 
         Scanner sc = new Scanner(System.in);
 
-        String line = "5 2 full_dict.txt";
+        String line = "5 5 full_dict.txt";
         String[] lineinfo = line.split(" ");
         //deal with command line arguments
         totalWords = Integer.parseInt(lineinfo[0]);  //total words to fall
@@ -233,24 +229,6 @@ public class WordApp {
                 caught.setText(caughts);
                 missed.setText(misseds);
                 scr.setText(scrs);
-            }
-        });
-    }
-
-    public static void showEndMessage() {
-        EventQueue.invokeLater(new Runnable() {
-
-            boolean flag = true;
-
-            @Override
-            public void run() {
-
-                while (flag = true) {
-                    if (GUIUpdater.isDone == true) {
-                        JOptionPane.showMessageDialog(null, "Thanks for playing", "Winner!", JOptionPane.INFORMATION_MESSAGE);
-                        flag = false;
-                    }
-                }
             }
         });
     }

@@ -19,6 +19,7 @@ public class WordDictionary {
 		
 	}
 	
+        //Get a new random word from the dictionary
 	public synchronized String getNewWord() {
 		int wdPos= (int)(Math.random() * size);
 		return theDict[wdPos];

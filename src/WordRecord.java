@@ -63,6 +63,8 @@ public class WordRecord {
     }
 
     public synchronized int getSpeed() {
+        //GUIUpdater.setBusy(true);
+        
         return fallingSpeed;
     }
 

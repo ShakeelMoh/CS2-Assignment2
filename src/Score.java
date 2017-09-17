@@ -1,6 +1,7 @@
-
 public class Score {
 
+    //to be displayed on the GUI
+    //This class keeps track of all the players score
     private static int missedWords;
     private static int caughtWords;
     private static int gameScore;
@@ -46,4 +47,5 @@ public class Score {
         missedWords = 0;
         gameScore = 0;
     }
+    
 }
